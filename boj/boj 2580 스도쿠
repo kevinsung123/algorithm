@@ -1,0 +1,45 @@
+import sys
+sys.setrecursionlimit(10 ** 6)
+# 전역변수 및 자료구조 선언
+map = [list(map(int, sys.stdin.readline().split())) for _ in range(9)]
+row = [[False for _ in range(10)] for _ in range(9)]
+col = [[False for _ in range(10)] for _ in range(9)]
+squ = [[False for _ in range(10)] for _ in range(9)]
+arr = []
+
+def idx(y, x):
+    return y // 3 * 3 + x // 3
+
+def dfs(cnt):
+    if cnt == len(arr):
+        for y in range(9):
+            for x in range(9):
+                print(map[y][x], end=" ")
+            print()
+        exit()
+
+    y = arr[cnt][0]
+    x = arr[cnt][1]
+    for val in range(9):
+        val += 1
+        if not (row[y][val] or col[x][val] or squ[idx(y, x)][val]):
+            row[y][val] = col[x][val] = squ[idx(y, x)][val] = True
+            map[y][x] = val
+            if dfs(cnt + 1):
+                return True
+            row[y][val] = col[x][val] = squ[idx(y, x)][val] = False
+            map[y][x] = 0
+    return False
+
+
+if __name__ == '__main__':
+    for y in range(9):
+        for x in range(9):
+            if map[y][x] == 0:
+                arr.append((y, x))
+            else:
+                row[y][map[y][x]] = True
+                col[x][map[y][x]] = True
+                squ[idx(y, x)][map[y][x]] = True
+
+    dfs(0)
